@@ -1,0 +1,12 @@
+# Dependency monitoring for a security tool: watch the module graph
+# (touchvault, golang.org/x/sys) and the Actions pins for advisories.
+version: 2
+updates:
+  - package-ecosystem: gomod
+    directory: /
+    schedule:
+      interval: weekly
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
