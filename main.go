@@ -12,7 +12,8 @@
 // CA; that remains the separate secrets.yaml-custody question.
 //
 // Two private credentials are sealed in one vault, enrolled to BOTH
-// of Jeff's YubiKeys so losing one key is not a break-glass lockout:
+// of the operator's YubiKeys so losing one key is not a break-glass
+// lockout:
 //
 //	k8s-breakglass-key   -- the system:masters client PRIVATE KEY.
 //	                        Its public cert stays in the clear (it
@@ -29,9 +30,9 @@
 //	             a short expiry (client-go caches it, so one touch
 //	             opens a working window rather than gating every
 //	             command).
-//	seal         one-time ceremony (Jeff, at the hardware): create
-//	             the vault, store the key + talosconfig, enroll both
-//	             keys, write the sealed bytes.
+//	seal         one-time ceremony (the operator, at the hardware):
+//	             create the vault, store the key + talosconfig, enroll
+//	             both keys, write the sealed bytes.
 //	talos-unseal break-glass for the machine API: touch -> write the
 //	             talosconfig to a caller-provided (tmpfs) path for a
 //	             single session; the caller shreds it after.
@@ -78,6 +79,15 @@ var agentEnvMarkers = []string{
 }
 
 func main() {
+	// Refuse everything, before any dispatch, when a known agent
+	// harness environment is detected. Break-glass must never run
+	// under an agent -- this is the fast, named pre-check; the FIDO2
+	// touch (below, per subcommand) is the real, unlisted-agent-proof
+	// gate.
+	if err := refuseIfAgent(); err != nil {
+		fmt.Fprintf(os.Stderr, "touchglass: %v\n", err)
+		os.Exit(1)
+	}
 	if len(os.Args) < 2 {
 		usage()
 		os.Exit(2)
@@ -140,9 +150,6 @@ func runCredential(args []string) error {
 	if *vaultPath == "" || *certPath == "" {
 		return errors.New("credential: -vault and -cert are required")
 	}
-	if err := refuseIfAgent(); err != nil {
-		return err
-	}
 
 	cert, err := os.ReadFile(*certPath)
 	if err != nil {
@@ -175,9 +182,6 @@ func runTalosUnseal(args []string) error {
 	}
 	if *vaultPath == "" || *outPath == "" {
 		return errors.New("talos-unseal: -vault and -out are required")
-	}
-	if err := refuseIfAgent(); err != nil {
-		return err
 	}
 
 	cfg, err := unsealEntry(*vaultPath, entryTalos)
