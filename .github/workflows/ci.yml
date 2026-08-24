@@ -1,0 +1,26 @@
+# Build/vet/test + ASCII presubmit on GitHub's ephemeral runners (this
+# is the egress the homenet jail deliberately refuses). No repo
+# secrets are used, so fork-PR builds cannot exfiltrate anything;
+# still, set "Require approval for all outside collaborators" under
+# Actions settings so hostile PRs do not auto-run.
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  ascii:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sh scripts/check-ascii.sh
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+      - run: go build ./...
+      - run: go vet ./...
+      - run: go test ./...

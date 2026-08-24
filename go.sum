@@ -1,0 +1,4 @@
+github.com/jeffbstewart/touchvault v0.0.0-20260714012450-14a3a16448ec h1:/9dXbw5ZkiNd3pe4FBq+RWhhLObj+rBhu1bEgsS+qMA=
+github.com/jeffbstewart/touchvault v0.0.0-20260714012450-14a3a16448ec/go.mod h1:dlT9nD+d/KcW3EkfONf76lyW5GYolJeUFoK1QRK0Dl8=
+golang.org/x/sys v0.47.0 h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=
+golang.org/x/sys v0.47.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
