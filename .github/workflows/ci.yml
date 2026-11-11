@@ -1,5 +1,5 @@
-# Build/vet/test + ASCII presubmit on GitHub's ephemeral runners (this
-# is the egress the homenet jail deliberately refuses). No repo
+# Build/vet/test + ASCII presubmit on GitHub's ephemeral runners (the
+# agent's own environment has no egress). No repo
 # secrets are used, so fork-PR builds cannot exfiltrate anything;
 # still, set "Require approval for all outside collaborators" under
 # Actions settings so hostile PRs do not auto-run.
