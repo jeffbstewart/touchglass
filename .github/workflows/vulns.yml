@@ -2,8 +2,8 @@
 # this runs every day against main so a new Go advisory against the
 # pinned toolchain or a module surfaces within a day, not when the
 # next PR happens by (2026-10-26: GO-2026-6809 sat five days until a
-# docs PR tripped a gate).  Zero secrets by policy (cloister
-# docs/grange.md R6): the workflow's own token, scoped to issues, is
+# docs PR tripped a gate).  Zero secrets by policy (forge-lint
+# docs/requirements.md R6): the workflow's own token, scoped to issues, is
 # the only credential, and it is used to keep ONE tracking issue
 # assigned to the operator -- opened or refreshed on findings, closed
 # on a clean run -- because a scheduled run's failure email goes to

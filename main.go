@@ -7,9 +7,9 @@
 // Threat model: this is a MISHAP fence, not malice containment. It
 // makes an inadvertent break-glass invocation -- by an agent, a
 // stray script, muscle memory -- fail closed on a touch that the
-// caller cannot provide. It does NOT contain an attacker who reads
-// secrets.yaml from the repo and mints a fresh admin cert from the
-// CA; that remains the separate secrets.yaml-custody question.
+// caller cannot provide. It does NOT contain an attacker who obtains
+// the cluster CA material and mints a fresh admin cert; CA custody is
+// a separate question.
 //
 // Two private credentials are sealed in one vault, enrolled to BOTH
 // of the operator's YubiKeys so losing one key is not a break-glass
@@ -210,7 +210,7 @@ func unsealEntry(vaultPath, name string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("opening vault: %w", err)
 	}
-	fmt.Fprintln(os.Stderr, "cell1 break-glass: touch your security key...")
+	fmt.Fprintln(os.Stderr, "touchglass break-glass: touch your security key...")
 	sess, err := v.Unlock(auth)
 	if err != nil {
 		return "", fmt.Errorf("unlocking vault (touch failed or no enrolled key present): %w", err)
