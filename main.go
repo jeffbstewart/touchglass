@@ -36,6 +36,9 @@
 //	talos-unseal break-glass for the machine API: touch -> write the
 //	             talosconfig to a caller-provided (tmpfs) path for a
 //	             single session; the caller shreds it after.
+//	keys, enroll, remove-key, check
+//	             manage which security keys open an existing vault
+//	             (keys.go). No plaintext is needed or written.
 package main
 
 import (
@@ -100,6 +103,14 @@ func main() {
 		err = runSeal(os.Args[2:])
 	case "talos-unseal":
 		err = runTalosUnseal(os.Args[2:])
+	case "keys":
+		err = runKeys(os.Args[2:])
+	case "enroll":
+		err = runEnroll(os.Args[2:])
+	case "remove-key":
+		err = runRemoveKey(os.Args[2:])
+	case "check":
+		err = runCheck(os.Args[2:])
 	case "-h", "--help", "help":
 		usage()
 		return
@@ -124,6 +135,12 @@ subcommands:
   credential     kubectl exec credential plugin (touch -> ExecCredential)
   seal           one-time enrollment ceremony (run at the hardware)
   talos-unseal   write the talosconfig to a path for one session (touch)
+  keys           list the enrolled security keys (no touch)
+  enroll         add a security key to an existing vault (touch an
+                 enrolled key, then the new one)
+  remove-key     remove one enrolled key by slot (touch an enrolled key)
+  check          unlock and read nothing: proves the key you touch is
+                 enrolled (touch)
 `)
 }
 
