@@ -53,6 +53,13 @@ identity) so break-glass is rare and deliberate.
 - **`talos-unseal`** -- for CLIs with no exec-plugin hook (Talos'
   `talosctl`): unlock on a touch and write the config to a tmpfs path
   for a single session; shred it after.
+- **`keys` / `enroll` / `remove-key` / `check`** -- change which
+  security keys open an existing vault, without the plaintext.
+  `enroll` takes one touch on an already-enrolled key, then three on
+  the new one; the vault's data key is re-wrapped for it and no
+  secret is decrypted. `remove-key` refuses to remove the last key.
+  `check` unlocks and reads nothing, to prove a given key is
+  enrolled. The vault file is rewritten in place (atomically).
 
 A fast pre-check refuses even before the touch prompt when a known
 agent-harness environment variable is set
@@ -74,6 +81,10 @@ touchvault FIDO provider is platform-specific.
     touchglass seal         --vault vault.bin --k8s-key masters.key --talosconfig talosconfig
     touchglass credential   --vault vault.bin --cert breakglass.crt   # used by a kubeconfig exec stanza
     touchglass talos-unseal --vault vault.bin --out /dev/shm/talosconfig
+    touchglass keys         --vault vault.bin                         # no touch
+    touchglass enroll       --vault vault.bin --label yk-laptop      # enrolled key, then the new one
+    touchglass check        --vault vault.bin                         # with only the key under test present
+    touchglass remove-key   --vault vault.bin --slot 1
 
 Wire `credential` into a kubeconfig:
 
